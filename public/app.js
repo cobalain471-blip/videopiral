@@ -1,37 +1,29 @@
-let totalBayar = 0;
-
-// ======================
-// STEP 1: KLIK THUMBNAIL
-// ======================
-function openInfo() {
+function openPopup() {
+  document.getElementById("popup").style.display = "flex";
   fetch("/klik-thumbnail", { method: "POST" });
-
-  document.getElementById("infoBox").classList.remove("hidden");
 }
 
-// ======================
-// STEP 2: LANJUT BAYAR
-// ======================
+function closePopup(e) {
+  if (e.target.id === "popup") {
+    document.getElementById("popup").style.display = "none";
+  }
+}
+
 function lanjutBayar() {
-  document.getElementById("infoBox").classList.add("hidden");
-
-  // generate kode unik
-  let unik = Math.floor(Math.random() * 900) + 100;
-  totalBayar = 5000 + unik;
-
-  document.getElementById("nominal").innerText =
-    "Transfer sebesar: Rp " + totalBayar;
-
-  document.getElementById("qrisBox").classList.remove("hidden");
+  fetch("/klik-bayar", { method: "POST" });
 }
 
-// ======================
-// STEP 3: SUDAH BAYAR
-// ======================
-function konfirmasi() {
-  document.getElementById("qrisBox").classList.add("hidden");
-  document.getElementById("confirmBox").classList.remove("hidden");
-}
+async function konfirmasiBayar() {
+  const nominal = document.getElementById("nominal").value;
+  const error = document.getElementById("error");
 
-// ======================
-// STEP 4: CEK
+  if (nominal != 5000) {
+    error.innerText = "❌ Nominal salah, mohon input kembali";
+    return;
+  }
+
+  const res = await fetch("/api/redirect");
+  const data = await res.json();
+
+  window.location.href = data.link;
+}
