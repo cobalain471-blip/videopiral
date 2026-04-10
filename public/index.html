@@ -11,18 +11,23 @@
 <div class="grid">
 
   <div class="card" onclick="openPopup()">
-    <img src="https://picsum.photos/200/300?1">
-    <div class="title">Video Viral 1</div>
+    <div class="thumb">
+      <img src="https://picsum.photos/300/400?1">
+      <div class="view">👁 1K</div>
+      <div class="duration">02:59</div>
+    </div>
+    <div class="like-bar">👍 66%</div>
+    <div class="title">Video Viral Panas Terbaru</div>
   </div>
 
   <div class="card" onclick="openPopup()">
-    <img src="https://picsum.photos/200/300?2">
-    <div class="title">Video Viral 2</div>
-  </div>
-
-  <div class="card" onclick="openPopup()">
-    <img src="https://picsum.photos/200/300?3">
-    <div class="title">Video Viral 3</div>
+    <div class="thumb">
+      <img src="https://picsum.photos/300/400?2">
+      <div class="view">👁 371</div>
+      <div class="duration">01:00</div>
+    </div>
+    <div class="like-bar">👍 0%</div>
+    <div class="title">Konten Eksklusif Terbongkar</div>
   </div>
 
 </div>
@@ -35,13 +40,15 @@
     <div id="step1">
       <h3>Untuk menonton video</h3>
       <p>Bayar Rp 5.000</p>
-      <button onclick="stepBayar()">Lanjutkan Bayar</button>
+      <button id="btnBayar" onclick="stepBayar()">Lanjutkan Bayar</button>
     </div>
 
     <!-- STEP 2 -->
     <div id="step2" style="display:none;">
       <h3>Scan QRIS</h3>
-      <img src="qris.png" style="width:100%; margin-top:10px">
+      <img src="qris.png" style="width:100%">
+      <h2 id="totalBayar">Rp 0</h2>
+      <p>Kode unik: <span id="kodeUnik"></span></p>
       <button onclick="stepKonfirmasi()">Saya Sudah Bayar</button>
     </div>
 
