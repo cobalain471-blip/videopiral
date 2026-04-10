@@ -1,17 +1,37 @@
-function cekBayar() {
-  const input = document.getElementById("inputNominal").value;
+let totalBayar = 0;
 
-  if (parseInt(input) === totalBayar) {
-    fetch("/klik-bayar", { method: "POST" });
+// ======================
+// STEP 1: KLIK THUMBNAIL
+// ======================
+function openInfo() {
+  fetch("/klik-thumbnail", { method: "POST" });
 
-    // ambil link redirect dari server
-    fetch("/api/redirect")
-      .then(res => res.json())
-      .then(data => {
-        window.location.href = data.link;
-      });
-
-  } else {
-    alert("Nominal tidak sesuai!");
-  }
+  document.getElementById("infoBox").classList.remove("hidden");
 }
+
+// ======================
+// STEP 2: LANJUT BAYAR
+// ======================
+function lanjutBayar() {
+  document.getElementById("infoBox").classList.add("hidden");
+
+  // generate kode unik
+  let unik = Math.floor(Math.random() * 900) + 100;
+  totalBayar = 5000 + unik;
+
+  document.getElementById("nominal").innerText =
+    "Transfer sebesar: Rp " + totalBayar;
+
+  document.getElementById("qrisBox").classList.remove("hidden");
+}
+
+// ======================
+// STEP 3: SUDAH BAYAR
+// ======================
+function konfirmasi() {
+  document.getElementById("qrisBox").classList.add("hidden");
+  document.getElementById("confirmBox").classList.remove("hidden");
+}
+
+// ======================
+// STEP 4: CEK
