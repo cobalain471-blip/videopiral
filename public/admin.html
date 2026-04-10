@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background: red;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📊 Admin Dashboard</h1>
+<h2>📊 Statistik</h2>
+<p>Klik Thumbnail: <span id="t1">0</span></p>
+<p>Klik Bayar: <span id="t2">0</span></p>
+<p>Total Pendapatan: Rp <span id="t3">0</span></p>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Status</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+
+  <tbody id="data"></tbody>
+</table>
+
+<script>
+async function load() {
+  const res = await fetch("/api/payments");
+  const data = await res.json();
+
+  document.getElementById("data").innerHTML = data.map(p => `
+    <tr>
+      <td>${p.id}</td>
+      <td>${p.status}</td>
+      <td>${p.createdAt}</td>
+    </tr>
+  `).join("");
+}
+
+load();
+setInterval(load, 3000);
+</script>
+<script>
+// FORMAT RUPIAH
+function formatRupiah(angka) {
+  return angka.toLocaleString("id-ID");
+}
+
+// LOAD STATS
+async function loadStats() {
+  const res = await fetch("/api/stats");
+  const data = await res.json();
+
+  document.getElementById("t1").innerText = data.klikThumbnail;
+  document.getElementById("t2").innerText = data.klikBayar;
+  document.getElementById("t3").innerText = formatRupiah(data.totalPendapatan);
+}
+
+// JALANKAN
+setInterval(loadStats, 2000);
+loadStats();
+</script>
+</body>
+</html>

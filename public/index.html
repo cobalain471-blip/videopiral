@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Video Viral</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="feed">
+
+  <!-- VIDEO 1 -->
+  <div class="video-card" onclick="openLock()">
+    <img src="gambar/1.jpg">
+    <div class="overlay">🔒 Klik untuk Unlock</div>
+  </div>
+
+  <!-- VIDEO 2 -->
+  <div class="video-card" onclick="openLock()">
+    <img src="gambar/2.jpg">
+    <div class="overlay">🔒 Klik untuk Unlock</div>
+  </div>
+
+  <!-- VIDEO 3 -->
+  <div class="video-card" onclick="openLock()">
+    <img src="gambar/3.jpg">
+    <div class="overlay">🔒 Klik untuk Unlock</div>
+  </div>
+
+  <!-- VIDEO 4 -->
+  <div class="video-card" onclick="openLock()">
+    <img src="gambar/4.jpg">
+    <div class="overlay">🔒 Klik untuk Unlock</div>
+  </div>
+
+  <!-- VIDEO 5 -->
+  <div class="video-card" onclick="openLock()">
+    <img src="gambar/5.jpg">
+    <div class="overlay">🔒 Klik untuk Unlock</div>
+  </div>
+
+</div>
+
+<!-- POPUP QRIS -->
+<div id="popup" class="popup hidden">
+  <div class="popup-content">
+    <h3>Scan QRIS</h3>
+    <img src="gambar/qris.jpg">
+    <button onclick="bayar()">Saya Sudah Bayar</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
