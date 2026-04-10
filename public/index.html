@@ -7,46 +7,62 @@
 </head>
 <body>
 
-<div class="feed">
+<h2>🔥 Video Viral Hari Ini</h2>
 
-  <!-- VIDEO 1 -->
-  <div class="video-card" onclick="openLock()">
+<div class="gallery">
+
+  <div class="thumb" onclick="openInfo()">
     <img src="gambar/1.jpg">
-    <div class="overlay">🔒 Klik untuk Unlock</div>
+    <p>Video Panas 1</p>
   </div>
 
-  <!-- VIDEO 2 -->
-  <div class="video-card" onclick="openLock()">
+  <div class="thumb" onclick="openInfo()">
     <img src="gambar/2.jpg">
-    <div class="overlay">🔒 Klik untuk Unlock</div>
+    <p>Video Viral 2</p>
   </div>
 
-  <!-- VIDEO 3 -->
-  <div class="video-card" onclick="openLock()">
+  <div class="thumb" onclick="openInfo()">
     <img src="gambar/3.jpg">
-    <div class="overlay">🔒 Klik untuk Unlock</div>
+    <p>Konten Eksklusif 3</p>
   </div>
 
-  <!-- VIDEO 4 -->
-  <div class="video-card" onclick="openLock()">
+  <div class="thumb" onclick="openInfo()">
     <img src="gambar/4.jpg">
-    <div class="overlay">🔒 Klik untuk Unlock</div>
+    <p>Video Trending 4</p>
   </div>
 
-  <!-- VIDEO 5 -->
-  <div class="video-card" onclick="openLock()">
+  <div class="thumb" onclick="openInfo()">
     <img src="gambar/5.jpg">
-    <div class="overlay">🔒 Klik untuk Unlock</div>
+    <p>Video Rahasia 5</p>
   </div>
 
 </div>
 
-<!-- POPUP QRIS -->
-<div id="popup" class="popup hidden">
-  <div class="popup-content">
+<!-- STEP 1 -->
+<div id="infoBox" class="popup hidden">
+  <div class="box">
+    <h3>Untuk menonton video harus melakukan pembayaran sebesar</h3>
+    <h2>Rp 5.000</h2>
+    <button onclick="lanjutBayar()">Lanjutkan Bayar</button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div id="qrisBox" class="popup hidden">
+  <div class="box">
     <h3>Scan QRIS</h3>
     <img src="gambar/qris.jpg">
-    <button onclick="bayar()">Saya Sudah Bayar</button>
+    <p id="nominal"></p>
+    <button onclick="konfirmasi()">Sudah Bayar</button>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div id="confirmBox" class="popup hidden">
+  <div class="box">
+    <h3>Masukkan nominal yang kamu bayar</h3>
+    <input type="number" id="inputNominal" placeholder="contoh: 5231">
+    <button onclick="cekBayar()">Konfirmasi</button>
   </div>
 </div>
 
