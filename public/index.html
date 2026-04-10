@@ -1,51 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Video Viral 🔥</title>
+  <title>Latest Videos</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>🔥 Video Viral Premium</h1>
+<div class="header">Latest Videos</div>
 
 <div class="grid">
+
   <div class="card" onclick="openPopup()">
-    <img src="https://picsum.photos/300/200?1">
-    <div class="title">Cewek cantik viral 😍</div>
+    <img src="https://picsum.photos/200/300?1">
+    <div class="title">Video Viral 1</div>
   </div>
 
   <div class="card" onclick="openPopup()">
-    <img src="https://picsum.photos/300/200?2">
-    <div class="title">Skandal terbaru 😱</div>
+    <img src="https://picsum.photos/200/300?2">
+    <div class="title">Video Viral 2</div>
   </div>
 
   <div class="card" onclick="openPopup()">
-    <img src="https://picsum.photos/300/200?3">
-    <div class="title">Video rahasia bocor 🔥</div>
+    <img src="https://picsum.photos/200/300?3">
+    <div class="title">Video Viral 3</div>
   </div>
 
-  <div class="card" onclick="openPopup()">
-    <img src="https://picsum.photos/300/200?4">
-    <div class="title">Yang lagi trending 🚀</div>
-  </div>
 </div>
 
 <!-- POPUP -->
 <div class="popup" id="popup" onclick="closePopup(event)">
-  <div class="popup-content">
+  <div class="popup-box">
 
-    <h3>Untuk menonton video</h3>
-    <p>Silakan bayar Rp 5.000</p>
+    <!-- STEP 1 -->
+    <div id="step1">
+      <h3>Untuk menonton video</h3>
+      <p>Bayar Rp 5.000</p>
+      <button onclick="stepBayar()">Lanjutkan Bayar</button>
+    </div>
 
-    <img src="qris.png" style="width:100%; margin-top:10px">
+    <!-- STEP 2 -->
+    <div id="step2" style="display:none;">
+      <h3>Scan QRIS</h3>
+      <img src="qris.png" style="width:100%; margin-top:10px">
+      <button onclick="stepKonfirmasi()">Saya Sudah Bayar</button>
+    </div>
 
-    <button onclick="lanjutBayar()">Lanjutkan Bayar</button>
-
-    <input type="number" id="nominal" placeholder="Masukkan nominal yang dibayar">
-
-    <button onclick="konfirmasiBayar()">Saya Sudah Bayar</button>
-
-    <p id="error" style="color:red; font-size:12px;"></p>
+    <!-- STEP 3 -->
+    <div id="step3" style="display:none;">
+      <h3>Konfirmasi Pembayaran</h3>
+      <input type="number" id="nominal" placeholder="Masukkan nominal">
+      <button onclick="konfirmasiBayar()">Kirim</button>
+      <p id="error" style="color:red;"></p>
+    </div>
 
   </div>
 </div>
