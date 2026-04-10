@@ -1,68 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Video Viral</title>
+  <title>Video Viral 🔥</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>🔥 Video Viral Hari Ini</h2>
+<h1>🔥 Video Viral Premium</h1>
 
-<div class="gallery">
-
-  <div class="thumb" onclick="openInfo()">
-    <img src="gambar/1.jpg">
-    <p>Video Panas 1</p>
+<div class="grid">
+  <div class="card" onclick="openPopup()">
+    <img src="https://picsum.photos/300/200?1">
+    <div class="title">Cewek cantik viral 😍</div>
   </div>
 
-  <div class="thumb" onclick="openInfo()">
-    <img src="gambar/2.jpg">
-    <p>Video Viral 2</p>
+  <div class="card" onclick="openPopup()">
+    <img src="https://picsum.photos/300/200?2">
+    <div class="title">Skandal terbaru 😱</div>
   </div>
 
-  <div class="thumb" onclick="openInfo()">
-    <img src="gambar/3.jpg">
-    <p>Konten Eksklusif 3</p>
+  <div class="card" onclick="openPopup()">
+    <img src="https://picsum.photos/300/200?3">
+    <div class="title">Video rahasia bocor 🔥</div>
   </div>
 
-  <div class="thumb" onclick="openInfo()">
-    <img src="gambar/4.jpg">
-    <p>Video Trending 4</p>
+  <div class="card" onclick="openPopup()">
+    <img src="https://picsum.photos/300/200?4">
+    <div class="title">Yang lagi trending 🚀</div>
   </div>
-
-  <div class="thumb" onclick="openInfo()">
-    <img src="gambar/5.jpg">
-    <p>Video Rahasia 5</p>
-  </div>
-
 </div>
 
-<!-- STEP 1 -->
-<div id="infoBox" class="popup hidden">
-  <div class="box">
-    <h3>Untuk menonton video harus melakukan pembayaran sebesar</h3>
-    <h2>Rp 5.000</h2>
+<!-- POPUP -->
+<div class="popup" id="popup" onclick="closePopup(event)">
+  <div class="popup-content">
+
+    <h3>Untuk menonton video</h3>
+    <p>Silakan bayar Rp 5.000</p>
+
+    <img src="qris.png" style="width:100%; margin-top:10px">
+
     <button onclick="lanjutBayar()">Lanjutkan Bayar</button>
-  </div>
-</div>
 
-<!-- STEP 2 -->
-<div id="qrisBox" class="popup hidden">
-  <div class="box">
-    <h3>Scan QRIS</h3>
-    <img src="gambar/qris.jpg">
-    <p id="nominal"></p>
-    <button onclick="konfirmasi()">Sudah Bayar</button>
-  </div>
-</div>
+    <input type="number" id="nominal" placeholder="Masukkan nominal yang dibayar">
 
-<!-- STEP 3 -->
-<div id="confirmBox" class="popup hidden">
-  <div class="box">
-    <h3>Masukkan nominal yang kamu bayar</h3>
-    <input type="number" id="inputNominal" placeholder="contoh: 5231">
-    <button onclick="cekBayar()">Konfirmasi</button>
+    <button onclick="konfirmasiBayar()">Saya Sudah Bayar</button>
+
+    <p id="error" style="color:red; font-size:12px;"></p>
+
   </div>
 </div>
 
