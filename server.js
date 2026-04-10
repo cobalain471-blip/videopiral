@@ -5,21 +5,15 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// =================
-// DATA
-// =================
 let stats = {
   klikThumbnail: 0,
   klikBayar: 0,
   totalPendapatan: 0
 };
 
-// LINK REDIRECT (default)
 let redirectLink = "https://example.com";
 
-// =================
-// TRACKING
-// =================
+// tracking
 app.post("/klik-thumbnail", (req, res) => {
   stats.klikThumbnail++;
   res.json({ ok: true });
@@ -31,9 +25,7 @@ app.post("/klik-bayar", (req, res) => {
   res.json({ ok: true });
 });
 
-// =================
-// REDIRECT API
-// =================
+// redirect API
 app.get("/api/redirect", (req, res) => {
   res.json({ link: redirectLink });
 });
@@ -43,32 +35,17 @@ app.post("/api/redirect", (req, res) => {
   res.json({ success: true });
 });
 
-// =================
-// SUCCESS PAGE
-// =================
-app.get("/success", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/success.html"));
-});
-
-// =================
-// ADMIN PAGE
-// =================
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/admin.html"));
-});
-
-// =================
-// ROOT (WAJIB)
-// =================
+// halaman
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
-// =================
-// START
-// =================
-const PORT = process.env.PORT || 3000;
+app.get("/admin", (req, res) => {
+  res.send("Admin panel nanti bisa dikembangkan");
+});
 
+// start
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server jalan di port " + PORT);
 });
