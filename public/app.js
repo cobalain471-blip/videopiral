@@ -1,72 +1,71 @@
-let isProcessing = false;
+const express = require("express");
+const path = require("path");
 
-// OPEN POPUP
-function openPopup() {
-  document.getElementById("popup").style.display = "flex";
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-  document.getElementById("step1").style.display = "block";
-  document.getElementById("step2").style.display = "none";
-  document.getElementById("step3").style.display = "none";
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
-  isProcessing = false;
-  document.getElementById("btnBayar").disabled = false;
+let currentPayment = 0;
 
-  fetch("/klik-thumbnail", { method: "POST" });
-}
+// ===============================
+// TRACKING (OPSIONAL)
+// ===============================
+app.post("/klik-thumbnail", (req, res) => {
+  console.log("Thumbnail diklik");
+  res.sendStatus(200);
+});
 
-// CLOSE
-function closePopup(e) {
-  if (e.target.id === "popup") {
-    document.getElementById("popup").style.display = "none";
+app.post("/klik-bayar", (req, res) => {
+  console.log("Tombol bayar diklik");
+  res.sendStatus(200);
+});
+
+// ===============================
+// QRIS AUTO GENERATE + KODE UNIK
+// ===============================
+app.get("/api/qris", (req, res) => {
+  try {
+    const kodeUnik = Math.floor(100 + Math.random() * 900); // 3 digit
+    const total = 5000 + kodeUnik;
+
+    currentPayment = total;
+
+    res.json({
+      nominal: total,
+      kode: kodeUnik
+    });
+  } catch (err) {
+    console.error("QRIS ERROR:", err);
+    res.status(500).json({ error: "Gagal generate QRIS" });
   }
-}
+});
 
-// STEP 1 → QRIS
-async function stepBayar() {
-  if (isProcessing) return;
-  isProcessing = true;
+// ===============================
+// VALIDASI PEMBAYARAN
+// ===============================
+app.post("/api/validate", (req, res) => {
+  try {
+    const { nominal } = req.body;
 
-  const btn = document.getElementById("btnBayar");
-  btn.disabled = true;
-  btn.innerText = "Loading...";
+    if (Number(nominal) === currentPayment) {
+      return res.json({
+        success: true,
+        redirect: "/video.html" // ganti sesuai halaman kamu
+      });
+    }
 
-  const res = await fetch("/api/qris");
-  const data = await res.json();
-
-  document.getElementById("totalBayar").innerText =
-    "Rp " + data.nominal.toLocaleString();
-
-  document.getElementById("kodeUnik").innerText = data.kode;
-
-  document.getElementById("step1").style.display = "none";
-  document.getElementById("step2").style.display = "block";
-
-  fetch("/klik-bayar", { method: "POST" });
-}
-
-// STEP 2 → INPUT
-function stepKonfirmasi() {
-  document.getElementById("step2").style.display = "none";
-  document.getElementById("step3").style.display = "block";
-}
-
-// VALIDASI
-async function konfirmasiBayar() {
-  const nominal = document.getElementById("nominal").value;
-  const error = document.getElementById("error");
-
-  const res = await fetch("/api/validate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nominal })
-  });
-
-  const data = await res.json();
-
-  if (!data.success) {
-    error.innerText = "Nominal tidak cocok!";
-    return;
+    res.json({ success: false });
+  } catch (err) {
+    console.error("VALIDATE ERROR:", err);
+    res.status(500).json({ success: false });
   }
+});
 
-  window.location.href = data.redirect;
-}
+// ===============================
+// START SERVER
+// ===============================
+app.listen(PORT, () => {
+  console.log("Server jalan di http://localhost:" + PORT);
+});
