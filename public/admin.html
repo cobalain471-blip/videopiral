@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Dashboard</title>
+  <title>Admin Panel</title>
   <style>
     body {
       font-family: Arial;
@@ -10,77 +10,54 @@
       padding: 20px;
     }
 
-    table {
+    input {
       width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      border: 1px solid #333;
       padding: 10px;
-      text-align: center;
+      margin-top: 10px;
     }
 
-    th {
+    button {
+      margin-top: 10px;
+      padding: 10px;
       background: red;
+      border: none;
+      color: white;
+      width: 100%;
     }
   </style>
 </head>
 <body>
 
-<h1>📊 Admin Dashboard</h1>
-<h2>📊 Statistik</h2>
-<p>Klik Thumbnail: <span id="t1">0</span></p>
-<p>Klik Bayar: <span id="t2">0</span></p>
-<p>Total Pendapatan: Rp <span id="t3">0</span></p>
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Status</th>
-      <th>Created At</th>
-    </tr>
-  </thead>
+<h1>⚙️ Admin Panel</h1>
 
-  <tbody id="data"></tbody>
-</table>
+<h3>🔗 Link Redirect</h3>
+<input type="text" id="link" placeholder="https://...">
+<button onclick="save()">Simpan Link</button>
 
 <script>
 async function load() {
-  const res = await fetch("/api/payments");
+  const res = await fetch("/api/redirect");
   const data = await res.json();
 
-  document.getElementById("data").innerHTML = data.map(p => `
-    <tr>
-      <td>${p.id}</td>
-      <td>${p.status}</td>
-      <td>${p.createdAt}</td>
-    </tr>
-  `).join("");
+  document.getElementById("link").value = data.link;
+}
+
+async function save() {
+  const link = document.getElementById("link").value;
+
+  await fetch("/api/redirect", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ link })
+  });
+
+  alert("Link berhasil disimpan!");
 }
 
 load();
-setInterval(load, 3000);
 </script>
-<script>
-// FORMAT RUPIAH
-function formatRupiah(angka) {
-  return angka.toLocaleString("id-ID");
-}
 
-// LOAD STATS
-async function loadStats() {
-  const res = await fetch("/api/stats");
-  const data = await res.json();
-
-  document.getElementById("t1").innerText = data.klikThumbnail;
-  document.getElementById("t2").innerText = data.klikBayar;
-  document.getElementById("t3").innerText = formatRupiah(data.totalPendapatan);
-}
-
-// JALANKAN
-setInterval(loadStats, 2000);
-loadStats();
-</script>
 </body>
 </html>
