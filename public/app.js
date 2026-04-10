@@ -1,91 +1,72 @@
-const express = require("express");
-const path = require("path");
+let isProcessing = false;
 
-const app = express();
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+// OPEN POPUP
+function openPopup() {
+  document.getElementById("popup").style.display = "flex";
 
-// =================
-// DATA
-// =================
-let stats = {
-  klikThumbnail: 0,
-  klikBayar: 0,
-  totalPendapatan: 0
-};
+  document.getElementById("step1").style.display = "block";
+  document.getElementById("step2").style.display = "none";
+  document.getElementById("step3").style.display = "none";
 
-let redirectLink = "https://example.com";
+  isProcessing = false;
+  document.getElementById("btnBayar").disabled = false;
 
-// PAYMENT
-let currentPayment = null;
+  fetch("/klik-thumbnail", { method: "POST" });
+}
 
-// =================
-// TRACKING
-// =================
-app.post("/klik-thumbnail", (req, res) => {
-  stats.klikThumbnail++;
-  res.json({ ok: true });
-});
+// CLOSE
+function closePopup(e) {
+  if (e.target.id === "popup") {
+    document.getElementById("popup").style.display = "none";
+  }
+}
 
-app.post("/klik-bayar", (req, res) => {
-  stats.klikBayar++;
-  res.json({ ok: true });
-});
+// STEP 1 → QRIS
+async function stepBayar() {
+  if (isProcessing) return;
+  isProcessing = true;
 
-// =================
-// QRIS GENERATE
-// =================
-app.get("/api/qris", (req, res) => {
-  const kodeUnik = Math.floor(100 + Math.random() * 900);
-  const total = 5000 + kodeUnik;
+  const btn = document.getElementById("btnBayar");
+  btn.disabled = true;
+  btn.innerText = "Loading...";
 
-  currentPayment = total;
+  const res = await fetch("/api/qris");
+  const data = await res.json();
 
-  res.json({
-    nominal: total,
-    kode: kodeUnik
-  });
-});
+  document.getElementById("totalBayar").innerText =
+    "Rp " + data.nominal.toLocaleString();
 
-// =================
+  document.getElementById("kodeUnik").innerText = data.kode;
+
+  document.getElementById("step1").style.display = "none";
+  document.getElementById("step2").style.display = "block";
+
+  fetch("/klik-bayar", { method: "POST" });
+}
+
+// STEP 2 → INPUT
+function stepKonfirmasi() {
+  document.getElementById("step2").style.display = "none";
+  document.getElementById("step3").style.display = "block";
+}
+
 // VALIDASI
-// =================
-app.post("/api/validate", (req, res) => {
-  const { nominal } = req.body;
+async function konfirmasiBayar() {
+  const nominal = document.getElementById("nominal").value;
+  const error = document.getElementById("error");
 
-  if (parseInt(nominal) === currentPayment) {
-    stats.totalPendapatan += currentPayment;
-    return res.json({ success: true, redirect: redirectLink });
+  const res = await fetch("/api/validate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nominal })
+  });
+
+  const data = await res.json();
+
+  if (!data.success) {
+    error.innerText = "Nominal tidak cocok!";
+    return;
   }
 
-  res.json({ success: false });
-});
-
-// =================
-// REDIRECT CONTROL
-// =================
-app.get("/api/redirect", (req, res) => {
-  res.json({ link: redirectLink });
-});
-
-app.post("/api/redirect", (req, res) => {
-  redirectLink = req.body.link;
-  res.json({ success: true });
-});
-
-// =================
-// PAGES
-// =================
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/admin.html"));
-});
-
-app.get("/success", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/success.html"));
-});
-
-// =================
-// START
-// =================
-const PORT = 3000;
-app.listen(PORT, () => console.log("Server jalan di " + PORT));
+  window.location.href = data.redirect;
+}
