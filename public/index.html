@@ -1,68 +1,151 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Latest Videos</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Video</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+    }
+
+    .card {
+      width: 200px;
+      margin: 100px auto;
+      cursor: pointer;
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0,0,0,0.9);
+    }
+
+    .box {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: red;
+      color: white;
+      border: none;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<div class="header">Latest Videos</div>
+<h2>Klik Video</h2>
 
-<div class="grid">
-
-  <div class="card" onclick="openPopup()">
-    <div class="thumb">
-      <img src="https://picsum.photos/300/400?1">
-      <div class="view">👁 1K</div>
-      <div class="duration">02:59</div>
-    </div>
-    <div class="like-bar">👍 66%</div>
-    <div class="title">Video Viral Panas Terbaru</div>
-  </div>
-
-  <div class="card" onclick="openPopup()">
-    <div class="thumb">
-      <img src="https://picsum.photos/300/400?2">
-      <div class="view">👁 371</div>
-      <div class="duration">01:00</div>
-    </div>
-    <div class="like-bar">👍 0%</div>
-    <div class="title">Konten Eksklusif Terbongkar</div>
-  </div>
-
+<div class="card" onclick="openPopup()">
+  <img src="https://picsum.photos/300/400">
 </div>
 
-<!-- POPUP -->
 <div class="popup" id="popup" onclick="closePopup(event)">
-  <div class="popup-box">
+  <div class="box">
 
     <!-- STEP 1 -->
     <div id="step1">
-      <h3>Untuk menonton video</h3>
-      <p>Bayar Rp 5.000</p>
-      <button id="btnBayar" onclick="stepBayar()">Lanjutkan Bayar</button>
+      <h3>Bayar Rp 5.000</h3>
+      <button onclick="stepBayar()">Lanjutkan Bayar</button>
     </div>
 
     <!-- STEP 2 -->
     <div id="step2" style="display:none;">
-      <h3>Scan QRIS</h3>
-      <img src="qris.png" style="width:100%">
-      <h2 id="totalBayar">Rp 0</h2>
-      <p>Kode unik: <span id="kodeUnik"></span></p>
-      <button onclick="stepKonfirmasi()">Saya Sudah Bayar</button>
+      <h3>Scan QR</h3>
+      <p id="total"></p>
+      <p>Kode: <span id="kode"></span></p>
+      <button onclick="step3()">Saya Sudah Bayar</button>
     </div>
 
     <!-- STEP 3 -->
     <div id="step3" style="display:none;">
-      <h3>Konfirmasi Pembayaran</h3>
-      <input type="number" id="nominal" placeholder="Masukkan nominal">
-      <button onclick="konfirmasiBayar()">Kirim</button>
-      <p id="error" style="color:red;"></p>
+      <input id="nominal" placeholder="Masukkan nominal">
+      <button onclick="cek()">Konfirmasi</button>
+      <p id="err" style="color:red;"></p>
     </div>
 
   </div>
 </div>
 
-<script src="app.js"></script>
+<script>
+let total = 0;
+
+function openPopup() {
+  document.getElementById("popup").style.display = "flex";
+}
+
+function closePopup(e) {
+  if (e.target.id === "popup") {
+    document.getElementById("popup").style.display = "none";
+  }
+}
+
+async function stepBayar() {
+  try {
+    const res = await fetch("/api/qris");
+    const data = await res.json();
+
+    total = data.nominal;
+
+    document.getElementById("total").innerText = "Total: Rp " + total;
+    document.getElementById("kode").innerText = data.kode;
+
+    document.getElementById("step1").style.display = "none";
+    document.getElementById("step2").style.display = "block";
+
+  } catch {
+    alert("Server error");
+  }
+}
+
+function step3() {
+  document.getElementById("step2").style.display = "none";
+  document.getElementById("step3").style.display = "block";
+}
+
+async function cek() {
+  const nominal = document.getElementById("nominal").value;
+
+  const res = await fetch("/api/validate", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ nominal })
+  });
+
+  const data = await res.json();
+
+  if (!data.success) {
+    document.getElementById("err").innerText = "Nominal salah!";
+    return;
+  }
+
+  window.location.href = data.redirect;
+}
+</script>
+
 </body>
 </html>
