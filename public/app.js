@@ -1,46 +1,91 @@
-function openPopup() {
-  document.getElementById("popup").style.display = "flex";
+const express = require("express");
+const path = require("path");
 
-  // reset step
-  document.getElementById("step1").style.display = "block";
-  document.getElementById("step2").style.display = "none";
-  document.getElementById("step3").style.display = "none";
+const app = express();
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
-  fetch("/klik-thumbnail", { method: "POST" });
-}
+// =================
+// DATA
+// =================
+let stats = {
+  klikThumbnail: 0,
+  klikBayar: 0,
+  totalPendapatan: 0
+};
 
-function closePopup(e) {
-  if (e.target.id === "popup") {
-    document.getElementById("popup").style.display = "none";
+let redirectLink = "https://example.com";
+
+// PAYMENT
+let currentPayment = null;
+
+// =================
+// TRACKING
+// =================
+app.post("/klik-thumbnail", (req, res) => {
+  stats.klikThumbnail++;
+  res.json({ ok: true });
+});
+
+app.post("/klik-bayar", (req, res) => {
+  stats.klikBayar++;
+  res.json({ ok: true });
+});
+
+// =================
+// QRIS GENERATE
+// =================
+app.get("/api/qris", (req, res) => {
+  const kodeUnik = Math.floor(100 + Math.random() * 900);
+  const total = 5000 + kodeUnik;
+
+  currentPayment = total;
+
+  res.json({
+    nominal: total,
+    kode: kodeUnik
+  });
+});
+
+// =================
+// VALIDASI
+// =================
+app.post("/api/validate", (req, res) => {
+  const { nominal } = req.body;
+
+  if (parseInt(nominal) === currentPayment) {
+    stats.totalPendapatan += currentPayment;
+    return res.json({ success: true, redirect: redirectLink });
   }
-}
 
-// STEP 1 → STEP 2
-function stepBayar() {
-  document.getElementById("step1").style.display = "none";
-  document.getElementById("step2").style.display = "block";
+  res.json({ success: false });
+});
 
-  fetch("/klik-bayar", { method: "POST" });
-}
+// =================
+// REDIRECT CONTROL
+// =================
+app.get("/api/redirect", (req, res) => {
+  res.json({ link: redirectLink });
+});
 
-// STEP 2 → STEP 3
-function stepKonfirmasi() {
-  document.getElementById("step2").style.display = "none";
-  document.getElementById("step3").style.display = "block";
-}
+app.post("/api/redirect", (req, res) => {
+  redirectLink = req.body.link;
+  res.json({ success: true });
+});
 
-// FINAL CONFIRM
-async function konfirmasiBayar() {
-  const nominal = document.getElementById("nominal").value;
-  const error = document.getElementById("error");
+// =================
+// PAGES
+// =================
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/admin.html"));
+});
 
-  if (nominal != 5000) {
-    error.innerText = "Nominal tidak sesuai!";
-    return;
-  }
+app.get("/success", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/success.html"));
+});
 
-  const res = await fetch("/api/redirect");
-  const data = await res.json();
-
-  window.location.href = data.link;
-}
+// =================
+// START
+// =================
+const PORT = 3000;
+app.listen(PORT, () => console.log("Server jalan di " + PORT));
