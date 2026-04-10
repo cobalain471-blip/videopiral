@@ -34,13 +34,10 @@ app.post("/klik-bayar", (req, res) => {
 // =================
 // REDIRECT API
 // =================
-
-// GET LINK
 app.get("/api/redirect", (req, res) => {
   res.json({ link: redirectLink });
 });
 
-// UPDATE LINK
 app.post("/api/redirect", (req, res) => {
   redirectLink = req.body.link;
   res.json({ success: true });
@@ -61,7 +58,17 @@ app.get("/admin", (req, res) => {
 });
 
 // =================
+// ROOT (WAJIB)
+// =================
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
+
+// =================
 // START
 // =================
-const PORT = 3000;
-app.listen(PORT, () => console.log("Server jalan " + PORT));
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server jalan di port " + PORT);
+});
